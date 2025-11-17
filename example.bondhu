@@ -1,0 +1,51 @@
+// Amar Bondhu Bhasha Program
+dost
+
+// ---------------- Variables ----------------
+rakh a = 5;
+rakh b = 10;
+rakh sum = 0;
+
+// ---------------- Array/List ----------------
+list numbers = {1, 2, 3, 4, 5};
+
+// ---------------- For loop (ghuro) ----------------
+ghuro(rakh i = 0; i < 5; i = i + 1) {
+    bol("Number at index [");
+    bol(i);
+    bol("] is ");
+    bol(numbers[i]);
+    bol("\n"); // Notun line
+    sum = sum + numbers[i];
+}
+
+// ---------------- Arithmetic Operations ----------------
+rakh product = a * b;
+rakh difference = b - a;
+rakh division = b / a;
+rakh modulo = b % a;
+
+// ---------------- Conditional (jodi/nahole) ----------------
+jodi(sum > 10) {
+    bol("Sum is greater than 10\n");
+} nahole {
+    bol("Sum is 10 or less\n");
+}
+
+// ---------------- While loop (jokhon) ----------------
+rakh counter = 0;
+jokhon(counter < 3) {
+    bol("Counter: ");
+    bol(counter);
+    bol("\n");
+    counter = counter + 1;
+}
+
+// ---------------- Final Output ----------------
+bol("Final Sum: "); bol(sum); bol("\n");
+bol("Product: "); bol(product); bol("\n");
+bol("Difference: "); bol(difference); bol("\n");
+bol("Division: "); bol(division); bol("\n");
+bol("Modulo: "); bol(modulo); bol("\n");
+
+chollam

@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en" class="dark"> <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bondhu Interpreter IDE (Pro)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+  /* Base Styles */
+  body {
+    font-family: 'Inter', sans-serif;
+    transition: background-color 0.3s, color 0.3s;
+    scroll-behavior: smooth;
+  }
+  pre, textarea, code {
+    font-family: 'Fira Code', monospace;
+    font-size: 14px;
+    line-height: 1.7; /* Increased line height for readability */
+  }
+  
+  /* NEW: Aesthetic Neon/Synthwave Theme */
+
+  /* Light Mode */
+  html.light body {
+    background-color: #f1f5f9; /* bg-slate-100 */
+    color: #1e293b; /* text-slate-800 */
+  }
+  html.light .section-bg { background-color: #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+  html.light .header-text { color: #1e293b; }
+  html.light .accent-text, html.light .glow-text { color: #0ea5e9; } /* text-sky-500 */
+  html.light .tab-btn { color: #475569; } /* text-slate-600 */
+  html.light .tab-btn.active { color: #0ea5e9; border-bottom-color: #0ea5e9; }
+  html.light .tab-btn:hover:not(.active) { background-color: #e2e8f0; } /* bg-slate-200 */
+  html.light .console-output { background-color: #1e293b; } /* bg-slate-800 */
+  html.light .console-text.success { color: #e2e8f0; } /* text-slate-200 */
+  html.light .console-text.error { color: #f87171; } /* text-red-400 */
+  html.light .editor-bg { background-color: #ffffff; }
+  html.light .line-numbers { background-color: #f8fafc; color: #94a3b8; } /* bg-slate-50, text-slate-400 */
+  html.light .syntax-highlighter { color: #1e293b; }
+  html.light textarea { caret-color: #1e293b; }
+  html.light .syntax-highlighter .keyword { color: #2563eb; } /* text-blue-600 */
+  html.light .syntax-highlighter .string { color: #16a34a; } /* text-green-600 */
+  html.light .syntax-highlighter .number { color: #dc2626; } /* text-red-600 */
+  html.light .syntax-highlighter .comment { color: #64748b; font-style: italic; } /* text-slate-500 */
+  html.light .modal-content { background-color: #ffffff; }
+  html.light .animated-headline { text-shadow: none; } /* No glow in light mode */
+  html.light .btn-secondary { background-color: #e2e8f0; color: #1e293b; } /* bg-slate-200 */
+  html.light .btn-secondary:hover { background-color: #cbd5e1; } /* bg-slate-300 */
+  html.light .btn-danger:hover { background-color: #ef4444; color: white; }
+  html.light .btn-success:hover { background-color: #22c55e; color: white; }
+  html.light pre.demo-code, html.light pre.tutorial-code { background-color: #f8fafc; } /* bg-slate-50 */
+  html.light pre.demo-console { background-color: #1e293b; } /* bg-slate-800 */
+  html.light .demo-code .keyword { color: #2563eb; }
+  html.light .demo-code .string { color: #16a34a; }
+  html.light .demo-code .number { color: #dc2626; }
+  html.light .demo-code .comment { color: #64748b; }
+  html.light #instruction-guide code {
+    background-color: #e2e8f0; /* bg-slate-200 */
+    color: #db2777; /* text-pink-600 */
+  }
+
+  /* Dark Mode (Default) */
+  html.dark body {
+    background-color: #0d1117; /* GitHub Dark */
+    color: #cbd5e1; /* text-slate-300 */
+  }
+  html.dark .section-bg { background-color: #1e293b; } /* bg-slate-800 */
+  html.dark .header-text { color: #ffffff; }
+  html.dark .accent-text { color: #38bdf8; } /* text-sky-400 */
+  html.dark .tab-btn { color: #94a3b8; } /* text-slate-400 */
+  html.dark .tab-btn.active { color: #38bdf8; border-bottom-color: #38bdf8; }
+  html.dark .tab-btn:hover:not(.active) { background-color: #334155; } /* bg-slate-700 */
+  html.dark .console-output { background-color: #020617; } /* bg-slate-950 */
+  html.dark .console-text.success { color: #e2e8f0; } /* text-slate-200 */
+  html.dark .console-text.error { color: #f87171; } /* text-red-400 */
+  html.dark .editor-bg { background-color: #020617; } /* bg-slate-950 */
+  html.dark .line-numbers { background-color: #1e293b; color: #475569; } /* bg-slate-800, text-slate-600 */
+  html.dark .syntax-highlighter { color: #e2e8f0; } /* text-slate-200 */
+  html.dark textarea { caret-color: #38bdf8; }
+  html.dark .syntax-highlighter .keyword { color: #ec4899; } /* text-pink-500 */
+  html.dark .syntax-highlighter .string { color: #a3e635; } /* text-lime-400 */
+  html.dark .syntax-highlighter .number { color: #f97316; } /* text-orange-500 */
+  html.dark .syntax-highlighter .comment { color: #64748b; font-style: italic; } /* text-slate-500 */
+  html.dark .modal-content { background-color: #1e293b; }
+  html.dark .btn-secondary { background-color: #334155; color: #cbd5e1; } /* bg-slate-700 */
+  html.dark .btn-secondary:hover { background-color: #475569; } /* bg-slate-600 */
+  html.dark .btn-danger:hover { background-color: #ef4444; color: white; }
+  html.dark .btn-success:hover { background-color: #22c55e; color: white; }
+  html.dark pre.demo-code, html.dark pre.tutorial-code { background-color: #0d1117; } /* GitHub Dark */
+  html.dark pre.demo-console { background-color: #020617; } /* bg-slate-950 */
+  html.dark .demo-code .keyword { color: #ec4899; }
+  html.dark .demo-code .string { color: #a3e635; }
+  html.dark .demo-code .number { color: #f97316; }
+  html.dark .demo-code .comment { color: #64748b; }
+  html.dark #instruction-guide code {
+    background-color: #334155; /* bg-slate-700 */
+    color: #f472b6; /* text-pink-400 */
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  html.dark ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+  html.dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
+  html.light ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  html.light ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+  /* Editor specific styles */
+  .editor-container {
+    position: relative;
+    border-radius: 0.75rem; /* rounded-xl */
+    overflow: hidden;
+  }
+  .line-numbers {
+    padding: 1rem 0.75rem;
+    text-align: right;
+    user-select: none;
+    font-size: 14px;
+    line-height: 1.7;
+    position: sticky;
+    left: 0;
+    top: 0;
+    height: 100%;
+  }
+  .code-wrapper {
+    position: relative;
+    flex-grow: 1;
+  }
+  .syntax-highlighter, #codeEditor {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 1rem;
+    margin: 0;
+    border: none;
+    outline: none;
+    overflow: auto;
+    white-space: pre;
+  }
+  #codeEditor {
+    z-index: 2;
+    background: transparent;
+    color: transparent; /* Text is invisible, caret is visible */
+    resize: none;
+  }
+  .syntax-highlighter {
+    z-index: 1;
+    pointer-events: none;
+  }
+  
+  /* NEW: Animated Headline with Light Effect */
+  .animated-headline {
+    font-weight: 900; /* extrabold */
+    background: linear-gradient(90deg, 
+      #38bdf8, /* sky-400 */
+      #ec4899, /* pink-500 */
+      #8b5cf6, /* violet-500 */
+      #38bdf8  /* sky-400 */
+    );
+    background-size: 400% 400%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-flow 10s ease infinite;
+    /* Light Effect (Glow) */
+    text-shadow: 0 0 10px rgba(56, 189, 248, 0.3), 
+                 0 0 20px rgba(236, 72, 153, 0.2);
+  }
+
+  @keyframes gradient-flow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  /* NEW: Glow Text for other headlines */
+  .glow-text {
+    text-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+  }
+  html.light .glow-text {
+    text-shadow: none;
+  }
+
+  /* Modal Styles */
+  .modal {
+    transition: opacity 0.25s ease;
+  }
+  .modal-content {
+    transition: all 0.25s ease;
+  }
+  
+  /* Tutorial & Demo Code Block Styling */
+  pre.demo-code, pre.tutorial-code {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    overflow-x: auto;
+  }
+  pre.demo-console {
+    padding: 1rem;
+    border-radius: 8px;
+  }
+  
+  /* NEW: Inline code styling for tutorials */
+  #instruction-guide code {
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-weight: 500;
+  }
+  
+  /* NEW: Tutorial & Demo content styling fixes */
+  .demo-container {
+    border-bottom-width: 1px;
+    border-color: #334155; /* slate-700 */
+    padding-bottom: 1.5rem; /* pb-6 */
+    margin-bottom: 1.5rem; /* mb-6 */
+  }
+  html.light .demo-container {
+    border-color: #e2e8f0; /* slate-200 */
+  }
+  .demo-container:last-child {
+    border-bottom-width: 0;
+    margin-bottom: 0;
+  }
+  #instruction-guide h3 {
+    font-size: 1.25rem; /* text-xl */
+    font-weight: 600; /* font-semibold */
+    margin-top: 1.5rem; /* mt-6 */
+    margin-bottom: 0.5rem; /* mb-2 */
+    border-bottom: 1px solid #334155; /* slate-700 */
+    padding-bottom: 4px;
+  }
+  html.light #instruction-guide h3 {
+    border-bottom-color: #e2e8f0; /* slate-200 */
+  }
+  #instruction-guide h4 {
+    font-size: 1.1rem; /* text-lg */
+    font-weight: 600; /* font-semibold */
+    margin-top: 1rem; /* mt-4 */
+    margin-bottom: 0.5rem; /* mb-2 */
+  }
+  html.dark #instruction-guide h4 {
+    color: #a5f3fc; /* text-cyan-300 */
+  }
+  html.light #instruction-guide h4 {
+    color: #0891b2; /* text-cyan-600 */
+  }
+  #instruction-guide p {
+    margin-bottom: 0.75rem; /* mb-3 */
+    line-height: 1.6;
+    font-size: 1.1rem; /* text-lg */
+  }
+  html.dark #instruction-guide p {
+    color: #cbd5e1; /* text-slate-300 */
+  }
+  html.light #instruction-guide p {
+    color: #334155; /* text-slate-700 */
+  }
+  #instruction-guide ul {
+    list-style-type: disc;
+    margin-left: 1.5rem; /* ml-6 */
+    margin-bottom: 0.75rem; /* mb-3 */
+    font-size: 1.1rem; /* text-lg */
+  }
+  
+  /* **THE FIX** for Tab Content */
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+</style>
+</head>
+<body class="p-4 md:p-8">
+
+<svg width="0" height="0" class="hidden">
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" id="icon-play"><path fill-rule="evenodd" d="M2 10a8 8 0 1116 0 8 8 0 01-16 0zm6.39-2.908a.75.75 0 01.766.027l3.5 2.25a.75.75 0 010 1.262l-3.5 2.25A.75.75 0 018 12.25v-4.5a.75.75 0 01.39-.658z" clip-rule="evenodd" /></symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" id="icon-copy"><path d="M7 3.5A1.5 1.5 0 018.5 2h3.879a1.5 1.5 0 011.06.44l3.122 3.121A1.5 1.5 0 0117 6.621V16.5a1.5 1.5 0 01-1.5 1.5h-8A1.5 1.5 0 016 16.5v-3a.75.75 0 00-1.5 0v3A3 3 0 007.5 19.5h8a3 3 0 003-3V6.621a3 3 0 00-.879-2.121L14.5 1.379A3 3 0 0012.379 0H8.5A3 3 0 005.5 3v1.5a.75.75 0 001.5 0v-1z" /><path d="M1.5 4.5A1.5 1.5 0 013 3h8.5a.75.75 0 000-1.5H3A3 3 0 000 4.5v12A3 3 0 003 19.5h8.5a.75.75 0 000-1.5H3A1.5 1.5 0 011.5 16.5v-12z" /></symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" id="icon-download"><path d="M10.75 2.75a.75.75 0 00-1.5 0v8.614L6.295 8.418a.75.75 0 10-1.09 1.03l4.25 4.5a.75.75 0 001.09 0l4.25-4.5a.75.75 0 00-1.09-1.03l-2.955 3.146V2.75z" /><path d="M3.5 12.75a.75.75 0 00-1.5 0v2.5A2.75 2.75 0 004.75 18h10.5A2.75 2.75 0 0018 15.25v-2.5a.75.75 0 00-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5z" /></symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" id="icon-clear-text"><path fill-rule="evenodd" d="M2 5.25A3.25 3.25 0 015.25 2h9.5A3.25 3.25 0 0118 5.25v9.5A3.25 3.25 0 0114.75 18h-9.5A3.25 3.25 0 012 14.75v-9.5zm1.5.828c0-.469.184-.918.513-1.247A2.25 2.25 0 015.25 3.5h9.5c.469 0 .918.184 1.247.513.329.329.513.778.513 1.247v2.422a.75.75 0 01-1.5 0V5.25c0-.135-.053-.26-.146-.354A.75.75 0 0014.75 4.75h-9.5a.75.75 0 00-.354.146.749.749 0 00-.146.354v9.5c0 .135.053.26.146.354.093.093.22.146.354.146h9.5c.135 0 .26-.053.354-.146.093-.093.146-.22.146-.354v-2.422a.75.75 0 011.5 0v2.422c0 .469-.184.918-.513 1.247A2.25 2.25 0 0114.75 16.5h-9.5a2.25 2.25 0 01-1.247-.513A2.25 2.25 0 013.5 14.75v-9.5zM8 8.25a.75.75 0 01.75-.75h2.5a.75.75 0 010 1.5h-2.5A.75.75 0 018 8.25zm0 3.5a.75.75 0 01.75-.75h5.5a.75.75 0 010 1.5h-5.5a.75.75 0 01-.75-.75z" clip-rule="evenodd" /></symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" id="icon-clear-console"><path fill-rule="evenodd" d="M2.5 4A1.5 1.5 0 001 5.5v9A1.5 1.5 0 002.5 16h3.868a2.5 2.5 0 012.122 1.132 1.25 1.25 0 102.018 0A2.5 2.5 0 0113.632 16h3.868A1.5 1.5 0 0019 14.5v-9A1.5 1.5 0 0017.5 4h-15zm14.15 9.19a.75.75 0 10-1.3- .78l-1.3 2.08a.25.25 0 01-.212.11H6.362a.25.25 0 01-.212-.11l-1.3-2.08a.75.75 0 10-1.3.78l1.3 2.08A1.75 1.75 0 006.362 17h7.276a1.75 1.75 0 001.512-1.03l1.3-2.08zM12.5 7.75a.75.75 0 01.75.75v2.75a.75.75 0 01-1.5 0V8.5a.75.75 0 01.75-.75zM7.5 8.5v2.75a.75.75 0 001.5 0V8.5a.75.75 0 00-1.5 0z" clip-rule="evenodd" /></symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" id="icon-load"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-11.25a.75.75 0 00-1.5 0v2.5h-2.5a.75.75 0 000 1.5h2.5v2.5a.75.75 0 001.5 0v-2.5h2.5a.75.75 0 000-1.5h-2.5v-2.5z" clip-rule="evenodd" /></symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" id="icon-book"><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V6zm14 0H4a.5.5 0 00-.5.5v10a.5.5 0 00.5.5h12a.5.5 0 00.5-.5V6.5A.5.5 0 0016 6zM2 4a1 1 0 00-1 1v11a1 1 0 001 1h1a1 1 0 001-1V5a1 1 0 00-1-1H2z" clip-rule="evenodd" /></symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" id="icon-user"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-5.5-2.5a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM10 12a5.99 5.99 0 00-4.793 2.39A6.483 6.483 0 0010 16.5a6.483 6.483 0 004.793-2.11A5.99 5.99 0 0010 12z" clip-rule="evenodd" /></symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" id="icon-close"><path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" /></symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" id="icon-sun"><path d="M10 2a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0110 2zM10 15a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0110 15zM10 7a3 3 0 100 6 3 3 0 000-6zM15.657 5.404a.75.75 0 10-1.06-1.06l-1.061 1.06a.75.75 0 001.06 1.06l1.06-1.06zM6.464 14.596a.75.75 0 10-1.06-1.06l-1.06 1.06a.75.75 0 001.06 1.06l1.06-1.06zM18 10a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0118 10zM5 10a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 015 10zM14.596 15.657a.75.75 0 001.06-1.06l-1.06-1.061a.75.75 0 10-1.06 1.06l1.06 1.06zM5.404 6.464a.75.75 0 001.06-1.06l-1.06-1.06a.75.75 0 10-1.06 1.06l1.06 1.06z" /></symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" id="icon-moon"><path fill-rule="evenodd" d="M7.455 1.332A.75.75 0 018.472 1.9l.204.341a.75.75 0 001.113.444l.341-.204a.75.75 0 01.964 0l.001.001.341.204a.75.75 0 001.113-.444l.204-.341a.75.75 0 011.018-.568A7.94 7.94 0 0017.5 7.455a.75.75 0 01-.568 1.018l-.341.204a.75.75 0 00-.444 1.113l.204.341.001.001a.75.75 0 010 .964l-.204.341a.75.75 0 00.444 1.113l.341.204a.75.75 0 01.568 1.018 7.94 7.94 0 00-4.48 4.48.75.75 0 01-1.018-.568l-.204-.341a.75.75 0 00-1.113-.444l-.341.204a.75.75 0 01-.964 0l-.001-.001-.341-.204a.75.75 0 00-1.113.444l-.204.341a.75.75 0 01-1.018.568 7.94 7.94 0 00-4.48-4.48.75.75 0 01.568-1.018l.341-.204a.75.75 0 00.444-1.113l-.204-.341a.75.75 0 010-.964l.204-.341a.75.75 0 00-.444-1.113l-.341-.204a.75.75 0 01-.568-1.018A7.94 7.94 0 007.455 1.332zM8.31 3.016A6.44 6.44 0 003.016 8.31a.75.75 0 01-1.025.26A7.939 7.939 0 019.44 2.545a.75.75 0 01.26 1.025 6.44 6.44 0 00-1.39-0.554z" clip-rule="evenodd" /></svg>
+</svg>
+
+<div class="max-w-7xl mx-auto">
+  <header class="text-center mb-10 flex justify-between items-center">
+    <button id="about-btn" class="flex items-center space-x-2 text-sky-400 font-medium hover:text-sky-300 transition-all opacity-80 hover:opacity-100">
+      <svg class="w-6 h-6"><use href="#icon-user"></use></svg>
+      <span class="hidden md:block">About Developer</span>
+    </button>
+    
+    <h1 class="animated-headline text-4xl md:text-5xl">Bondhu IDE Pro</h1>
+    
+    <button id="theme-toggle-btn" class="p-2 rounded-full section-bg shadow-md transition-all btn-secondary">
+      </button>
+  </header>
+
+  <main class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    
+    <div class="section-bg rounded-xl shadow-2xl overflow-hidden flex flex-col h-[500px] lg:h-[600px]">
+      <div class="p-4 flex justify-between items-center border-b border-gray-300 dark:border-slate-700">
+        <h2 class="text-xl font-semibold header-text glow-text">Bondhu Code Editor</h2>
+        <div class="flex space-x-2">
+          <button id="clearEditorButton" title="Clear Editor" class="p-2 rounded-lg btn-secondary btn-danger">
+            <svg class="w-5 h-5"><use href="#icon-clear-text"></use></svg>
+          </button>
+          <button id="downloadBondhuButton" title="Download .bondhu File" class="p-2 rounded-lg btn-secondary btn-success">
+            <svg class="w-5 h-5"><use href="#icon-download"></use></svg>
+          </button>
+        </div>
+      </div>
+      <div class="editor-container editor-bg flex flex-grow overflow-hidden">
+        <div id="line-numbers" class="line-numbers sticky left-0 top-0"><div>1</div></div>
+        <div class="code-wrapper">
+          <textarea id="codeEditor" 
+            autocapitalize="off" 
+            autocorrect="off" 
+            spellcheck="false" 
+            placeholder="dost
+  rakh x = 10;
+  bol(x);
+chollam"></textarea>
+          <pre id="highlighting-area" class="syntax-highlighter" aria-hidden="true"></pre>
+        </div>
+      </div>
+      <button id="runButton" class="w-full px-6 py-4 text-lg font-medium rounded-b-lg text-white bg-sky-600 hover:bg-sky-500 transition-all flex items-center justify-center space-x-2
+                             active:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-400">
+        <svg class="w-6 h-6"><use href="#icon-play"></use></svg>
+        <span>Run Koro</span>
+      </button>
+    </div>
+
+    <div class="section-bg rounded-xl shadow-2xl overflow-hidden flex flex-col h-[500px] lg:h-[600px]">
+      <div class="p-4 flex justify-between items-center border-b border-gray-300 dark:border-slate-700">
+        <h2 class="text-xl font-semibold header-text glow-text">Program Console</h2>
+        <div class="flex space-x-2">
+          <button id="copyButton" title="Copy to Clipboard" class="p-2 rounded-lg btn-secondary">
+            <svg class="w-5 h-5"><use href="#icon-copy"></use></svg>
+          </button>
+           <button id="clearConsoleButton" title="Clear Console" class="p-2 rounded-lg btn-secondary btn-danger">
+            <svg class="w-5 h-5"><use href="#icon-clear-console"></use></svg>
+          </button>
+        </div>
+      </div>
+      <pre id="programOutput" class="console-output console-text success min-h-[100px] w-full p-4 font-mono text-sm overflow-auto whitespace-pre-wrap flex-grow">&gt; Console e output dekhabe...
+</pre>
+    </div>
+  </main>
+
+  <section class="mt-12 section-bg rounded-xl shadow-lg p-6">
+    <h2 class="text-2xl font-bold text-center header-text mb-6 glow-text">Quick Start Guide & Demos</h2>
+    
+    <div class="flex justify-center flex-wrap gap-2 mb-4 border-b border-gray-300 dark:border-slate-700 pb-4">
+      <button class="tab-btn px-4 py-2 rounded-lg font-medium transition-all active" data-tab="tab-1">Hello Bondhu</button>
+      <button class="tab-btn px-4 py-2 rounded-lg font-medium transition-all" data-tab="tab-2">Loops & Condition</button>
+      <button class="tab-btn px-4 py-2 rounded-lg font-medium transition-all" data-tab="tab-3">List (Array)</button>
+      <button class="tab-btn px-4 py-2 rounded-lg font-medium transition-all" data-tab="tab-4">Input (poro)</button>
+    </div>
+
+    <div id="tab-1" class="tab-content demo-container active">
+      <h3 class="font-semibold text-lg mb-2 accent-text glow-text">Hello Bondhu (Variables & Output)</h3>
+      <p class="section-text mb-4 text-lg">`rakh` দিয়ে ভ্যারিয়েবল ডিক্লেয়ার করুন এবং `bol` দিয়ে প্রিন্ট করুন। `+` দিয়ে লেখা জোড়া লাগাতে পারবেন।</p>
+      <button class="load-example mb-4 flex items-center space-x-2 px-3 py-1 bg-sky-600 hover:bg-sky-500 text-white rounded-lg transition-all" data-example="1">
+        <svg class="w-5 h-5"><use href="#icon-load"></use></svg> <span>Load Example</span>
+      </button>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <pre class="demo-code p-4 rounded-lg text-sm" id="example-code-1"><span class="keyword">dost</span>
+  <span class="comment">// Variable declare</span>
+  <span class="keyword">rakh</span> naam = <span class="string">"Bondhu"</span>;
+  <span class="keyword">rakh</span> boyosh = <span class="number">5</span>;
+
+  <span class="comment">// Output</span>
+  <span class="keyword">bol</span>(<span class="string">"Hello "</span> + naam + <span class="string">"!"</span>);
+  <span class="keyword">bol</span>(<span class="string">"Tomar boyosh: "</span> + boyosh);
+<span class="keyword">chollam</span></pre>
+        </div>
+        <div>
+          <h4 class="font-semibold text-lg mb-2 text-green-400">Program Output</h4>
+          <pre class="demo-console p-4 rounded-lg text-sm text-gray-300">> Hello Bondhu!
+> Tomar boyosh: 5
+</pre>
+        </div>
+      </div>
+    </div>
+    
+    <div id="tab-2" class="tab-content demo-container">
+      <h3 class="font-semibold text-lg mb-2 accent-text glow-text">Loops & Condition</h3>
+      <p class="section-text mb-4 text-lg">`ghuro` (for loop) এবং `jodi` (if) / `nahole` (else) ব্যবহার করে দেখুন।</p>
+      <button class="load-example mb-4 flex items-center space-x-2 px-3 py-1 bg-sky-600 hover:bg-sky-500 text-white rounded-lg transition-all" data-example="2">
+        <svg class="w-5 h-5"><use href="#icon-load"></use></svg> <span>Load Example</span>
+      </button>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <pre class="demo-code p-4 rounded-lg text-sm" id="example-code-2"><span class="keyword">dost</span>
+  <span class="comment">// ghuro (for loop)</span>
+  <span class="keyword">ghuro</span>(<span class="keyword">rakh</span> i = <span class="number">1</span>; i <= <span class="number">5</span>; i = i + <span class="number">1</span>) {
+    
+    <span class="keyword">jodi</span> (i % <span class="number">2</span> == <span class="number">0</span>) {
+      <span class="keyword">bol</span>(i + <span class="string">" holo JOOR shongkhya"</span>);
+    } <span class="keyword">nahole</span> {
+      <span class="keyword">bol</span>(i + <span class="string">" holo BIJOOR shongkhya"</span>);
+    }
+    
+  }
+<span class="keyword">chollam</span></pre>
+        </div>
+        <div>
+          <h4 class="font-semibold text-lg mb-2 text-green-500">Program Output</h4>
+          <pre class="demo-console p-4 rounded-lg text-sm text-gray-300">> 1 holo BIJOOR shongkhya
+> 2 holo JOOR shongkhya
+> 3 holo BIJOOR shongkhya
+> 4 holo JOOR shongkhya
+> 5 holo BIJOOR shongkhya
+</pre>
+        </div>
+      </div>
+    </div>
+    
+    <div id="tab-3" class="tab-content demo-container">
+      <h3 class="font-semibold text-lg mb-2 accent-text glow-text">List (Array)</h3>
+      <p class="section-text mb-4 text-lg">`list` কীওয়ার্ড ব্যবহার করে অ্যারে তৈরি করুন। `[]` দিয়ে অ্যারে তৈরি করুন এবং অ্যাক্সেস করুন।</p>
+      <button class="load-example mb-4 flex items-center space-x-2 px-3 py-1 bg-sky-600 hover:bg-sky-500 text-white rounded-lg transition-all" data-example="3">
+        <svg class="w-5 h-5"><use href="#icon-load"></use></svg> <span>Load Example</span>
+      </button>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <pre class="demo-code p-4 rounded-lg text-sm" id="example-code-3"><span class="keyword">dost</span>
+  <span class="keyword">rakh</span> sum = <span class="number">0</span>;
+  <span class="keyword">list</span> numbers = [<span class="number">10</span>, <span class="number">20</span>, <span class="number">30</span>];
+  
+  <span class="comment">// array index diye access</span>
+  <span class="keyword">bol</span>(<span class="string">"Prothom number: "</span> + numbers[<span class="number">0</span>]);
+  
+  <span class="comment">// loop diye jog</span>
+  <span class="keyword">ghuro</span>(<span class="keyword">rakh</span> i = <span class="number">0</span>; i < <span class="number">3</span>; i = i + <span class="number">1</span>) {
+    sum = sum + numbers[i];
+  }
+  
+  <span class="keyword">bol</span>(<span class="string">"Total Sum: "</span> + sum);
+<span class="keyword">chollam</span></pre>
+        </div>
+        <div>
+          <h4 class="font-semibold text-lg mb-2 text-green-500">Program Output</h4>
+          <pre class="demo-console p-4 rounded-lg text-sm text-gray-300">> Prothom number: 10
+> Total Sum: 60
+</pre>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-4" class="tab-content demo-container">
+      <h3 class="font-semibold text-lg mb-2 accent-text glow-text">Input (poro)</h3>
+      <p class="section-text mb-4 text-lg">`poro()` (পড়ো) ফাংশন ব্যবহার করে ইউজারের কাছ থেকে ইনপুট নিন।</p>
+      <button class="load-example mb-4 flex items-center space-x-2 px-3 py-1 bg-sky-600 hover:bg-sky-500 text-white rounded-lg transition-all" data-example="4">
+        <svg class="w-5 h-5"><use href="#icon-load"></use></svg> <span>Load Example</span>
+      </button>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <pre class="demo-code p-4 rounded-lg text-sm" id="example-code-4"><span class="keyword">dost</span>
+  <span class="keyword">bol</span>(<span class="string">"Shagotom!"</span>);
+  
+  <span class="comment">// User input</span>
+  <span class="keyword">rakh</span> naam = <span class="keyword">poro</span>(<span class="string">"Tomar naam ki?"</span>);
+  
+  <span class="keyword">jodi</span> (naam) {
+    <span class="keyword">bol</span>(<span class="string">"Hello, "</span> + naam);
+  } <span class="keyword">nahole</span> {
+    <span class="keyword">bol</span>(<span class="string">"Naam na dile kotha bolbo na!"</span>);
+  }
+<span class="keyword">chollam</span></pre>
+        </div>
+        <div>
+          <h4 class="font-semibold text-lg mb-2 text-green-500">Program Output (Example)</h4>
+          <pre class="demo-console p-4 rounded-lg text-sm text-gray-300">
+<span class="comment">/*
+  (RUN KORO চাপলে একটি পপ-আপ বক্স আসবে)
+  
+  Pop-up box:
+  "Tomar naam ki?"
+  [ User "Sakib" likhlo ]
+  
+  Console Output:
+*/</span>
+> Shagotom!
+> Hello, Sakib
+</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-12">
+    <button id="toggle-instructions-btn" class="w-full flex justify-center items-center space-x-2 section-bg shadow-lg hover:bg-slate-700 p-4 rounded-xl transition-all">
+      <svg class="w-6 h-6 accent-text glow-text"><use href="#icon-book"></use></svg>
+      <span class="text-xl font-bold header-text">Full Bondhu Language Tutorial (Click to Show/Hide)</span>
+    </button>
+    
+    <div id="instruction-guide" class="hidden section-bg rounded-xl shadow-lg p-6 md:p-10 mt-4 section-text">
+      
+      <h2 class="text-3xl font-bold text-center header-text mb-8 glow-text">Bondhu Language Tutorial (সম্পূর্ণ গাইডলাইন)</h2>
+
+      <h3 class="glow-text">স্বাগতম!</h3>
+      <p>"Bondhu" একটি সহজ প্রোগ্রামিং ভাষা যা বন্ধুদের সাথে কথা বলার মতোই সহজ। এই গাইডটি আপনাকে শুরু থেকে সব কিছু শিখতে সাহায্য করবে।</p>
+
+      <h3 class="glow-text">১. আপনার প্রথম প্রোগ্রাম (Program Structure)</h3>
+      <p>প্রতিটি "Bondhu" প্রোগ্রাম শুরু হয় <code>dost</code> দিয়ে এবং শেষ হয় <code>chollam</code> দিয়ে। এর মাঝেই আপনাকে সব কোড লিখতে হবে।</p>
+      <pre class="tutorial-code"><span class="keyword">dost</span>
+  <span class="comment">// Shob code ekhane likhun</span>
+<span class="keyword">chollam</span></pre>
+
+      <h3 class="glow-text">২. কমেন্ট (Comments)</h3>
+      <p>কোডকে ব্যাখ্যা করার জন্য কমেন্ট ব্যবহার করা হয়। ইন্টারপ্রেটার <code>//</code> এর পরে লেখা কোনো কিছুই রান করে না।</p>
+      <pre class="tutorial-code"><span class="comment">// Eita ekti comment</span></pre>
+
+      <h3 class="glow-text">৩. আউটপুট দেখানো (Printing Output)</h3>
+      <p>স্ক্রিনে কিছু দেখাতে হলে <code>bol()</code> (বলো) কমান্ড ব্যবহার করুন। টেক্সট বা স্ট্রিং (String) লিখতে হলে সেটিকে ডাবল কোটেশন (<code>"..."</code>) এর ভেতরে রাখতে হবে।</p>
+      <pre class="tutorial-code"><span class="keyword">dost</span>
+  <span class="keyword">bol</span>(<span class="string">"Hello Bondhu!"</span>);
+<span class="keyword">chollam</span></pre>
+      <p>আপনি <code>+</code> চিহ্ন দিয়ে একাধিক জিনিস (নাম্বার, ভ্যারিয়েবল, স্ট্রিং) একসাথে প্রিন্ট করতে পারেন:</p>
+      <pre class="tutorial-code"><span class="keyword">bol</span>(<span class="string">"Amar boyosh: "</span> + <span class="number">25</span>);</pre>
+
+      <h3 class="glow-text">৪. ভ্যারিয়েবল (Variables)</h3>
+      <p>ভ্যারিয়েবল হলো তথ্য জমা রাখার পাত্র। "Bondhu" ভাষায় ভ্যারিয়েবল বানাতে <code>rakh</code> (রাখো) কীওয়ার্ডটি ব্যবহার করুন।</p>
+      <pre class="tutorial-code"><span class="keyword">dost</span>
+  <span class="keyword">rakh</span> number = <span class="number">10</span>;
+  <span class="keyword">rakh</span> naam = <span class="string">"Tamim"</span>;
+  
+  <span class="keyword">bol</span>(naam + <span class="string">" er number holo "</span> + number);
+<span class="keyword">chollam</span></pre>
+
+      <h3 class="glow-text">৫. লিস্ট বা অ্যারে (Lists/Arrays)</h3>
+      <p>একাধিক জিনিস একসাথে রাখতে <code>list</code> ব্যবহার করুন। লিস্ট বানাতে এবং তার ভেতরের জিনিস ব্যবহার করতে <code>[</code> এবং <code>]</code> (ব্র্যাকেট) ব্যবহার করুন। মনে রাখবেন, লিস্টের গণনা ০ (শূন্য) থেকে শুরু হয়।</p>
+      <pre class="tutorial-code"><span class="keyword">dost</span>
+  <span class="keyword">list</span> amar_list = [<span class="string">"apple"</span>, <span class="string">"banana"</span>, <span class="string">"cherry"</span>];
+  
+  <span class="keyword">bol</span>(amar_list[<span class="number">0</span>]); <span class="comment">// "apple" dekhabe</span>
+  <span class="keyword">bol</span>(amar_list[<span class="number">1</span>]); <span class="comment">// "banana" dekhabe</span>
+  
+  <span class="comment">// man poriborton</span>
+  amar_list[<span class="number">0</span>] = <span class="string">"mango"</span>;
+  <span class="keyword">bol</span>(<span class="string">"Notun fol: "</span> + amar_list[<span class="number">0</span>]);
+<span class="keyword">chollam</span></pre>
+
+      <h3 class="glow-text">৬. শর্ত (Conditions)</h3>
+      <p>সিদ্ধান্ত নেওয়ার জন্য <code>jodi</code> (যদি) এবং <code>nahole</code> (নাহলে) ব্যবহার করা হয়।</p>
+      
+      <h4><code>jodi</code> (if)</h4>
+      <p><code>jodi</code> এর পর <code>(...)</code> ব্র্যাকেটের ভেতরের শর্ত সত্যি (true) হলেই ভেতরের <code>{...}</code> ব্লকের কোড রান করবে।</p>
+      <pre class="tutorial-code"><span class="keyword">rakh</span> boyosh = <span class="number">18</span>;
+<span class="keyword">jodi</span> (boyosh >= <span class="number">18</span>) {
+  <span class="keyword">bol</span>(<span class="string">"Apni vote dite parben."</span>);
+}</pre>
+
+      <h4><code>jodi...nahole</code> (if...else)</h4>
+      <p>যদি <code>jodi</code> শর্তটি মিথ্যা (false) হয়, তবে <code>nahole</code> ব্লকের কোড রান করবে।</p>
+      <pre class="tutorial-code"><span class="keyword">rakh</span> taka = <span class="number">50</span>;
+<span class="keyword">jodi</span> (taka > <span class="number">100</span>) {
+  <span class="keyword">bol</span>(<span class="string">"Burger khabo"</span>);
+} <span class="keyword">nahole</span> {
+  <span class="keyword">bol</span>(<span class="string">"Shudhu cha khabo"</span>);
+}</pre>
+
+      <h3 class="glow-text">৭. লুপ (Loops)</h3>
+      <p>একই কাজ বারবার করার জন্য লুপ ব্যবহার করা হয়।</p>
+      
+      <h4><code>ghuro</code> (for loop)</h4>
+      <p><code>ghuro</code> লুপটি একটি নির্দিষ্ট সংখ্যক বার চলে। এর ৩টি অংশ আছে: <code>(শুরু; শেষ; প্রতি ধাপে বৃদ্ধি)</code></p>
+      <pre class="tutorial-code"><span class="keyword">dost</span>
+  <span class="comment">// 0 theke 4 porjonto print korbe</span>
+  <span class="keyword">ghuro</span>(<span class="keyword">rakh</span> i = <span class="number">0</span>; i < <span class="number">5</span>; i = i + <span class="number">1</span>) {
+    <span class="keyword">bol</span>(<span class="string">"Number: "</span> + i);
+  }
+<span class="keyword">chollam</span></pre>
+
+      <h4><code>jokhon</code> (while loop)</h4>
+      <p><code>jokhon</code> লুপটি ততক্ষণ চলতে থাকে, যতক্ষণ তার শর্তটি সত্যি (true) থাকে।</p>
+      <pre class="tutorial-code"><span class="keyword">dost</span>
+  <span class="keyword">rakh</span> count = <span class="number">0</span>;
+  <span class="keyword">jokhon</span>(count < <span class="number">3</span>) {
+    <span class="keyword">bol</span>(<span class="string">"Count hocche: "</span> + count);
+    count = count + <span class="number">1</span>; <span class="comment">// <-- Eita na dile loop kokhono thambe na!</span>
+  }
+<span class="keyword">chollam</span></pre>
+      
+      <h3 class="glow-text">৮. ইনপুট নেওয়া (User Input)</h3>
+      <p>ব্যবহারকারীর কাছ থেকে কোনো তথ্য নিতে <code>poro()</code> (পড়ো) কীওয়ার্ড ব্যবহার করুন। এটি একটি পপ-আপ বক্স দেখাবে।</p>
+      <pre class="tutorial-code"><span class="keyword">dost</span>
+  <span class="keyword">rakh</span> naam = <span class="keyword">poro</span>(<span class="string">"Tomar naam ki?"</span>);
+  <span class="keyword">bol</span>(<span class="string">"Hello, "</span> + naam + <span class="string">"! Kemon acho?"</span>);
+<span class="keyword">chollam</span></pre>
+
+      <h3 style="text-align:center; margin-top: 2rem;" class="accent-text glow-text">ব্যাস! এখন আপনি "Bondhu" ভাষায় কোড লেখার জন্য প্রস্তুত!</h3>
+    </div>
+  </section>
+
+</div>
+
+<div id="about-modal" class="modal fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-75 hidden opacity-0">
+  <div class="modal-content section-bg rounded-2xl shadow-2xl p-8 max-w-md w-full transform transition-all scale-95 opacity-0" id="about-modal-content">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-2xl font-bold header-text flex items-center space-x-2 glow-text">
+        <svg class="w-8 h-8 accent-text"><use href="#icon-user"></use></svg>
+        <span>About The Developer</span>
+      </h2>
+      <button id="close-modal-btn" class="text-slate-400 hover:text-white transition-all">
+        <svg class="w-6 h-6"><use href="#icon-close"></use></svg>
+      </button>
+    </div>
+    <img src="https://avatars.githubusercontent.com/u/1024025?v=4" alt="Developer Photo" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-sky-500">
+    <h3 class="text-center text-2xl font-bold header-text">Suraia</h3> <p class="text-center accent-text mb-4">Student & Aspiring Developer</p> <p class="text-center section-text">
+      Ami ei "Bondhu" language project-ti toiri korechi. Amar technology-r proti obhiman ache ebong ami sobsomoy notun kichu shikhte bhalobasi.
+    </p>
+    <div class="text-center mt-6">
+      <a href="https://github.com/suraia-sharin" target="_blank" class="px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-500 transition-all">Visit GitHub</a>
+    </div>
+  </div>
+</div>
+
+<script>
+// *** FIX FOR TABS ***
+// We must wait for the DOM to be loaded before adding event listeners
+document.addEventListener('DOMContentLoaded', () => {
+
+  // ---------------- DOM Elements ----------------
+  const codeEditor = document.getElementById('codeEditor');
+  const programOutput = document.getElementById('programOutput');
+  const runButton = document.getElementById('runButton');
+  const copyButton = document.getElementById('copyButton');
+  const clearEditorButton = document.getElementById('clearEditorButton');
+  const clearConsoleButton = document.getElementById('clearConsoleButton');
+  const downloadBondhuButton = document.getElementById('downloadBondhuButton');
+  const tabButtons = document.querySelectorAll('.tab-btn');
+  const tabContents = document.querySelectorAll('.tab-content');
+  const loadExampleButtons = document.querySelectorAll('.load-example');
+  const instructionGuide = document.getElementById('instruction-guide');
+  const toggleInstructionsBtn = document.getElementById('toggle-instructions-btn');
+  const themeToggleBtn = document.getElementById('theme-toggle-btn');
+  const aboutBtn = document.getElementById('about-btn');
+  const aboutModal = document.getElementById('about-modal');
+  const aboutModalContent = document.getElementById('about-modal-content');
+  const closeModalBtn = document.getElementById('close-modal-btn');
+  const lineNumbersDiv = document.getElementById('line-numbers');
+  const highlightingArea = document.getElementById('highlighting-area');
+
+  // ---------------- Token Types (Bondhu Bhasha) ----------------
+  const TokenType = {
+    TOK_DOST:"TOK_DOST", TOK_CHOLLAM:"TOK_CHOLLAM",
+    TOK_RAKH:"TOK_RAKH", TOK_BOL:"TOK_BOL",
+    TOK_JODI:"TOK_JODI", TOK_NAHOLE:"TOK_NAHOLE",
+    TOK_GHURO:"TOK_GHURO", TOK_JOKHON:"TOK_JOKHON",
+    TOK_LIST:"TOK_LIST",
+    TOK_PORO:"TOK_PORO", // Input keyword
+    TOK_NUMBER:"TOK_NUMBER", TOK_IDENTIFIER:"TOK_IDENTIFIER",
+    TOK_LPAREN:"TOK_LPAREN", TOK_RPAREN:"TOK_RPAREN", TOK_LBRACE:"TOK_LBRACE", TOK_RBRACE:"TOK_RBRACE",
+    TOK_LBRACKET:"TOK_LBRACKET", TOK_RBRACKET:"TOK_RBRACKET", // Array brackets
+    TOK_SEMI:"TOK_SEMI", TOK_COMMA:"TOK_COMMA",
+    TOK_PLUS:"TOK_PLUS", TOK_MINUS:"TOK_MINUS", TOK_MUL:"TOK_MUL", TOK_DIV:"TOK_DIV", TOK_MOD:"TOK_MOD",
+    TOK_EQ:"TOK_EQ", TOK_LT:"TOK_LT", TOK_GT:"TOK_GT", TOK_LE:"TOK_LE", TOK_GE:"TOK_GE", TOK_NE:"TOK_NE", TOK_EE:"TOK_EE",
+    TOK_STRING:"TOK_STRING",
+    TOK_EOF:"TOK_EOF", TOK_UNKNOWN:"TOK_UNKNOWN"
+  };
+
+  // ---------------- Tokenizer ----------------
+  function tokenize(src) {
+    const tokens = [];
+    let i = 0, line = 1;
+    const peek = () => i < src.length ? src[i] : '\0';
+    const next = () => { const c = peek(); i++; if (c == '\n') line++; return c; };
+
+    const keywords = {
+      "dost": TokenType.TOK_DOST,
+      "chollam": TokenType.TOK_CHOLLAM,
+      "rakh": TokenType.TOK_RAKH,
+      "bol": TokenType.TOK_BOL,
+      "jodi": TokenType.TOK_JODI,
+      "nahole": TokenType.TOK_NAHOLE,
+      "ghuro": TokenType.TOK_GHURO,
+      "jokhon": TokenType.TOK_JOKHON,
+      "list": TokenType.TOK_LIST,
+      "poro": TokenType.TOK_PORO
+    };
+
+    while (i < src.length) {
+      let c = peek();
+      if (/\s/.test(c)) { next(); continue; }
+
+      if (c == '/' && i + 1 < src.length && src[i + 1] == '/') {
+        let val = '';
+        while (i < src.length && peek() != '\n') val += next();
+        tokens.push({ type: 'COMMENT', value: val, line }); // Use a special type for comments
+        continue;
+      }
+
+      if (c == '"') {
+        next();
+        let val = '';
+        while (peek() != '"') {
+          if (peek() == '\0') throw new Error(`Line ${line}: Ei string ta sesh hoyni.`);
+          val += next();
+        }
+        next();
+        tokens.push({ type: TokenType.TOK_STRING, value: val, line });
+        continue;
+      }
+
+      if (/\d/.test(c)) {
+        let val = '';
+        while (/\d/.test(peek()) || peek() == '.') val += next();
+        tokens.push({ type: TokenType.TOK_NUMBER, value: val, line });
+        continue;
+      }
+
+      if (/[a-zA-Z_]/.test(c)) {
+        let val = '';
+        while (/[a-zA-Z0-9_]/.test(peek())) val += next();
+        
+        if (keywords[val]) {
+          tokens.push({ type: keywords[val], value: val, line });
+        } else {
+          tokens.push({ type: TokenType.TOK_IDENTIFIER, value: val, line });
+        }
+        continue;
+      }
+
+      // symbols
+      switch (c) {
+        case '(': tokens.push({ type: TokenType.TOK_LPAREN, value: '(', line }); next(); break;
+        case ')': tokens.push({ type: TokenType.TOK_RPAREN, value: ')', line }); next(); break;
+        case '{': tokens.push({ type: TokenType.TOK_LBRACE, value: '{', line }); next(); break;
+        case '}': tokens.push({ type: TokenType.TOK_RBRACE, value: '}', line }); next(); break;
+        case '[': tokens.push({ type: TokenType.TOK_LBRACKET, value: '[', line }); next(); break; 
+        case ']': tokens.push({ type: TokenType.TOK_RBRACKET, value: ']', line }); next(); break; 
+        case ';': tokens.push({ type: TokenType.TOK_SEMI, value: ';', line }); next(); break;
+        case ',': tokens.push({ type: TokenType.TOK_COMMA, value: ',', line }); next(); break;
+        case '+': tokens.push({ type: TokenType.TOK_PLUS, value: '+', line }); next(); break;
+        case '-': tokens.push({ type: TokenType.TOK_MINUS, value: '-', line }); next(); break;
+        case '*': tokens.push({ type: TokenType.TOK_MUL, value: '*', line }); next(); break;
+        case '/': tokens.push({ type: TokenType.TOK_DIV, value: '/', line }); next(); break;
+        case '%': tokens.push({ type: TokenType.TOK_MOD, value: '%', line }); next(); break;
+        case '=':
+          next();
+          if (peek() == '=') { next(); tokens.push({ type: TokenType.TOK_EE, value: '==', line }); }
+          else tokens.push({ type: TokenType.TOK_EQ, value: '=', line });
+          break;
+        case '<':
+          next();
+          if (peek() == '=') { next(); tokens.push({ type: TokenType.TOK_LE, value: '<=', line }); }
+          else tokens.push({ type: TokenType.TOK_LT, value: '<', line });
+          break;
+        case '>':
+          next();
+          if (peek() == '=') { next(); tokens.push({ type: TokenType.TOK_GE, value: '>=', line }); }
+          else tokens.push({ type: TokenType.TOK_GT, value: '>', line });
+          break;
+        case '!':
+          next();
+          if (peek() == '=') { next(); tokens.push({ type: TokenType.TOK_NE, value: '!=', line }); }
+          break;
+        default: 
+          throw new Error(`Line ${line}: Ei symbol ta chinte parini: ${c}`);
+      }
+    }
+    tokens.push({ type: TokenType.TOK_EOF, value: "EOF", line });
+    return tokens;
+  }
+
+  // ---------------- JS Generator (Transpiler to JS) ----------------
+  function generate_js(tokens) {
+    let js_out = "";
+
+    for (let i = 0; i < tokens.length; i++) {
+      const t = tokens[i];
+      
+      switch (t.type) {
+        case TokenType.TOK_DOST: break; 
+        case TokenType.TOK_CHOLLAM: break;
+        case TokenType.TOK_RAKH: js_out += "let "; break;
+        case TokenType.TOK_LIST: js_out += "let "; break; 
+        case TokenType.TOK_BOL: js_out += "console.log"; break;
+        case TokenType.TOK_PORO: js_out += "prompt"; break;
+        case TokenType.TOK_JODI: js_out += "if"; break;
+        case TokenType.TOK_NAHOLE: js_out += "else"; break;
+        case TokenType.TOK_GHURO: js_out += "for"; break;
+        case TokenType.TOK_JOKHON: js_out += "while"; break;
+
+        case TokenType.TOK_LBRACE: js_out += " {"; break; 
+        case TokenType.TOK_RBRACE: js_out += " }"; break;
+        case TokenType.TOK_LBRACKET: js_out += "["; break; 
+        case TokenType.TOK_RBRACKET: js_out += "]"; break;
+        
+        case TokenType.TOK_NUMBER:
+        case TokenType.TOK_IDENTIFIER:
+          js_out += t.value;
+          break;
+        case TokenType.TOK_STRING:
+          js_out += `"${t.value.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n')}"`;
+          break;
+        
+        case TokenType.TOK_PLUS: js_out += " + "; break;
+        case TokenType.TOK_MINUS: js_out += " - "; break;
+        case TokenType.TOK_MUL: js_out += " * "; break;
+        case TokenType.TOK_DIV: js_out += " / "; break;
+        case TokenType.TOK_MOD: js_out += " % "; break;
+        case TokenType.TOK_EQ: js_out += " = "; break;
+        case TokenType.TOK_LT: js_out += " < "; break;
+        case TokenType.TOK_GT: js_out += " > "; break;
+        case TokenType.TOK_LE: js_out += " <= "; break;
+        case TokenType.TOK_GE: js_out += " >= "; break;
+        case TokenType.TOK_NE: js_out += " != "; break;
+        case TokenType.TOK_EE: js_out += " == "; break;
+        case TokenType.TOK_LPAREN: js_out += "("; break;
+        case TokenType.TOK_RPAREN: js_out += ")"; break;
+        case TokenType.TOK_SEMI: js_out += ";\n"; break;
+        case TokenType.TOK_COMMA: js_out += ", "; break;
+        case 'COMMENT': js_out += `//${t.value}\n`; break; // Pass comments to JS
+        default: break;
+      }
+    }
+    return "(function(){\n" + js_out + "\n})();";
+  }
+
+  // ---------------- Code Execution ----------------
+  function executeCode(js_code) {
+    let console_output = "";
+    const original_log = console.log;
+    console.log = function(...args) {
+      console_output += "> " + args.map(String).join(' ') + '\n';
+    };
+
+    try {
+      eval(js_code); // Run the generated JS code
+      programOutput.classList.remove('error');
+      programOutput.classList.add('success');
+    } catch (e) {
+      console_output = `Bondhu Error: ${e.message}`;
+      programOutput.classList.remove('success');
+      programOutput.classList.add('error');
+    }
+
+    console.log = original_log; // Restore original console
+    return console_output;
+  }
+
+  // ---------------- Syntax Highlighting ----------------
+  const bondhuKeywords = '\\b(dost|chollam|rakh|bol|jodi|nahole|ghuro|jokhon|list|poro)\\b';
+  const keywordsRegex = new RegExp(bondhuKeywords, 'g');
+
+  function highlightSyntax(text) {
+    // Add a trailing newline to fix scroll issue
+    text = text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    
+    // 1. Comments
+    text = text.replace(/(\/\/.*)/g, '<span class="comment">$1</span>');
+    // 2. Strings
+    text = text.replace(/(".*?")/g, '<span class="string">$1</span>');
+    // 3. Keywords
+    text = text.replace(keywordsRegex, '<span class="keyword">$1</span>');
+    // 4. Numbers
+    text = text.replace(/\b(\d+(\.\d+)?)\b/g, '<span class="number">$1</span>');
+
+    return text + '\n';
+  }
+
+  function updateLineNumbers(text) {
+    const lines = text.split('\n').length || 1;
+    let lineHtml = '';
+    for (let i = 1; i <= lines; i++) {
+      lineHtml += `<div>${i}</div>`;
+    }
+    lineNumbersDiv.innerHTML = lineHtml;
+  }
+
+  function syncScroll(e) {
+    highlightingArea.scrollTop = e.target.scrollTop;
+    highlightingArea.scrollLeft = e.target.scrollLeft;
+    lineNumbersDiv.scrollTop = e.target.scrollTop;
+  }
+
+  // ---------------- Utility Functions ----------------
+  function downloadFile(filename, content) {
+    const name = prompt("File-er naam din:", filename);
+    if (!name) return; // User cancelled
+    
+    const element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+    element.setAttribute('download', name);
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  }
+
+  // ---------------- Theme Toggle ----------------
+  const sunIcon = `<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0110 2zM10 15a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0110 15zM10 7a3 3 0 100 6 3 3 0 000-6zM15.657 5.404a.75.75 0 10-1.06-1.06l-1.061 1.06a.75.75 0 001.06 1.06l1.06-1.06zM6.464 14.596a.75.75 0 10-1.06-1.06l-1.06 1.06a.75.75 0 001.06 1.06l1.06-1.06zM18 10a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0118 10zM5 10a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 015 10zM14.596 15.657a.75.75 0 001.06-1.06l-1.06-1.061a.75.75 0 10-1.06 1.06l1.06 1.06zM5.404 6.464a.75.75 0 001.06-1.06l-1.06-1.06a.75.75 0 10-1.06 1.06l1.06 1.06z" /></svg>`;
+  const moonIcon = `<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.455 1.332A.75.75 0 018.472 1.9l.204.341a.75.75 0 001.113.444l.341-.204a.75.75 0 01.964 0l.001.001.341.204a.75.75 0 001.113-.444l.204-.341a.75.75 0 011.018-.568A7.94 7.94 0 0017.5 7.455a.75.75 0 01-.568 1.018l-.341.204a.75.75 0 00-.444 1.113l.204.341.001.001a.75.75 0 010 .964l-.204.341a.75.75 0 00.444 1.113l.341.204a.75.75 0 01.568 1.018 7.94 7.94 0 00-4.48 4.48.75.75 0 01-1.018-.568l-.204-.341a.75.75 0 00-1.113-.444l-.341.204a.75.75 0 01-.964 0l-.001-.001-.341-.204a.75.75 0 00-1.113.444l-.204.341a.75.75 0 01-1.018.568 7.94 7.94 0 00-4.48-4.48.75.75 0 01.568-1.018l.341-.204a.75.75 0 00.444-1.113l-.204-.341a.75.75 0 010-.964l.204-.341a.75.75 0 00-.444-1.113l-.341-.204a.75.75 0 01-.568-1.018A7.94 7.94 0 007.455 1.332zM8.31 3.016A6.44 6.44 0 003.016 8.31a.75.75 0 01-1.025.26A7.939 7.939 0 019.44 2.545a.75.75 0 01.26 1.025 6.44 6.44 0 00-1.39-0.554z" clip-rule="evenodd" /></svg>`;
+
+  function setLightMode(isLight) {
+    if (isLight) {
+      document.documentElement.classList.add('light');
+      document.documentElement.classList.remove('dark');
+      themeToggleBtn.innerHTML = moonIcon;
+      localStorage.setItem('bondhu-theme', 'light');
+    } else {
+      document.documentElement.classList.add('dark');
+      document.documentElement.classList.remove('light');
+      themeToggleBtn.innerHTML = sunIcon;
+      localStorage.setItem('bondhu-theme', 'dark');
+    }
+  }
+
+  themeToggleBtn.addEventListener('click', () => {
+    setLightMode(document.documentElement.classList.contains('dark'));
+  });
+
+  // Load saved theme
+  const savedTheme = localStorage.getItem('bondhu-theme') || 'dark'; // Default to dark
+  setLightMode(savedTheme === 'light');
+
+
+  // ---------------- Event Listeners ----------------
+
+  // Main Run Button
+  runButton.addEventListener('click', () => {
+    try {
+      const code = codeEditor.value;
+      const tokens = tokenize(code);
+      const js_code = generate_js(tokens);
+      const output = executeCode(js_code);
+      programOutput.textContent = output;
+    } catch (e) {
+      programOutput.textContent = `Bondhu Error: ${e.message}`;
+      programOutput.classList.remove('success');
+      programOutput.classList.add('error');
+    }
+  });
+
+  // Editor Highlighting and Line Numbers
+  codeEditor.addEventListener('input', () => {
+    const text = codeEditor.value;
+    highlightingArea.innerHTML = highlightSyntax(text);
+    updateLineNumbers(text);
+    syncScroll({ target: codeEditor });
+  });
+  codeEditor.addEventListener('scroll', syncScroll);
+
+  // Call it once on load to set initial line numbers
+  updateLineNumbers(codeEditor.value);
+
+  // Copy Button
+  copyButton.addEventListener('click', () => {
+    navigator.clipboard.writeText(programOutput.textContent).then(() => {
+      copyButton.title = 'Copied!';
+      setTimeout(() => { copyButton.title = 'Copy to Clipboard'; }, 2000);
+    });
+  });
+
+  // Clear Editor Button
+  clearEditorButton.addEventListener('click', () => {
+    codeEditor.value = '';
+    highlightingArea.innerHTML = '';
+    updateLineNumbers('');
+  });
+
+  // Clear Console Button
+  clearConsoleButton.addEventListener('click', () => {
+    programOutput.textContent = '> Console cleared...';
+    programOutput.classList.remove('success');
+    programOutput.classList.add('error');
+  });
+
+  // Download Bondhu Button
+  downloadBondhuButton.addEventListener('click', () => {
+    downloadFile('my_code.bondhu', codeEditor.value);
+  });
+
+  // Tab switching logic
+  tabButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      tabButtons.forEach(btn => btn.classList.remove('active'));
+      tabContents.forEach(content => content.classList.remove('active'));
+      button.classList.add('active');
+      document.getElementById(button.dataset.tab).classList.add('active');
+    });
+  });
+
+  // Load Example buttons
+  loadExampleButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const exampleId = button.dataset.example;
+      const exampleCode = document.getElementById(`example-code-${exampleId}`).textContent;
+      codeEditor.value = exampleCode;
+      // Trigger input event to update highlighter and line numbers
+      codeEditor.dispatchEvent(new Event('input')); 
+      runButton.click();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  // Toggle Instructions Button
+  toggleInstructionsBtn.addEventListener('click', () => {
+    instructionGuide.classList.toggle('hidden');
+  });
+
+  // About Modal Logic
+  aboutBtn.addEventListener('click', () => {
+    aboutModal.classList.remove('hidden');
+    setTimeout(() => {
+        aboutModal.classList.remove('opacity-0');
+        aboutModalContent.classList.remove('scale-95', 'opacity-0');
+    }, 10);
+  });
+  closeModalBtn.addEventListener('click', () => {
+    aboutModalContent.classList.add('scale-95', 'opacity-0');
+    aboutModal.classList.add('opacity-0');
+    setTimeout(() => aboutModal.classList.add('hidden'), 250);
+  });
+  aboutModal.addEventListener('click', (e) => {
+    if (e.target === aboutModal) {
+      closeModalBtn.click();
+    }
+  });
+
+  // Load default example on page load
+  const defaultCode = `dost
+  bol("Bondhu Interpreter e shagotom!");
+  bol("Nicher 'Quick Start Guide' theke demo try korun.");
+  bol("Athoba nicher 'Full Bondhu Language Tutorial' button e click korun.");
+chollam`;
+  codeEditor.value = defaultCode;
+  highlightingArea.innerHTML = highlightSyntax(defaultCode);
+  updateLineNumbers(defaultCode);
+  runButton.click(); // Initial run
+
+}); // *** End of DOMContentLoaded ***
+</script>
+</body>
+</html>
