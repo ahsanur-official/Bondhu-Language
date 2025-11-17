@@ -2,7 +2,7 @@
 <html lang="en" class="dark"> <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bondhu Interpreter IDE (Pro)</title>
+<title>Bondhu Interpreter IDE (Ultimate)</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -363,6 +363,7 @@ chollam"></textarea>
       <button class="tab-btn px-4 py-2 rounded-lg font-medium transition-all" data-tab="tab-2">Loops & Condition</button>
       <button class="tab-btn px-4 py-2 rounded-lg font-medium transition-all" data-tab="tab-3">List (Array)</button>
       <button class="tab-btn px-4 py-2 rounded-lg font-medium transition-all" data-tab="tab-4">Input (poro)</button>
+      <button class="tab-btn px-4 py-2 rounded-lg font-medium transition-all" data-tab="tab-5">List Loop (NEW)</button>
     </div>
 
     <div id="tab-1" class="tab-content demo-container active">
@@ -440,18 +441,16 @@ chollam"></textarea>
   <span class="comment">// array index diye access</span>
   <span class="keyword">bol</span>(<span class="string">"Prothom number: "</span> + numbers[<span class="number">0</span>]);
   
-  <span class="comment">// loop diye jog</span>
-  <span class="keyword">ghuro</span>(<span class="keyword">rakh</span> i = <span class="number">0</span>; i < <span class="number">3</span>; i = i + <span class="number">1</span>) {
-    sum = sum + numbers[i];
-  }
+  <span class="comment">// Ekti item update korun</span>
+  numbers[<span class="number">1</span>] = <span class="number">25</span>;
+  <span class="keyword">bol</span>(<span class="string">"Notun ditiyo number: "</span> + numbers[<span class="number">1</span>]);
   
-  <span class="keyword">bol</span>(<span class="string">"Total Sum: "</span> + sum);
 <span class="keyword">chollam</span></pre>
         </div>
         <div>
           <h4 class="font-semibold text-lg mb-2 text-green-500">Program Output</h4>
           <pre class="demo-console p-4 rounded-lg text-sm text-gray-300">> Prothom number: 10
-> Total Sum: 60
+> Notun ditiyo number: 25
 </pre>
         </div>
       </div>
@@ -496,6 +495,38 @@ chollam"></textarea>
         </div>
       </div>
     </div>
+    
+    <div id="tab-5" class="tab-content demo-container">
+      <h3 class="font-semibold text-lg mb-2 accent-text glow-text">Looping a List (NEW)</h3>
+      <p class="section-text mb-4 text-lg">`list` এবং `ghuro` একসাথে ব্যবহার করে দেখুন কিভাবে একটি লিস্টের সব আইটেম প্রিন্ট করা যায়।</p>
+      <button class="load-example mb-4 flex items-center space-x-2 px-3 py-1 bg-sky-600 hover:bg-sky-500 text-white rounded-lg transition-all" data-example="5">
+        <svg class="w-5 h-5"><use href="#icon-load"></use></svg> <span>Load Example</span>
+      </button>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <pre class="demo-code p-4 rounded-lg text-sm" id="example-code-5"><span class="keyword">dost</span>
+  <span class="keyword">list</span> folguli = [<span class="string">"Aam"</span>, <span class="string">"Jaam"</span>, <span class="string">"Kola"</span>, <span class="string">"Lichu"</span>];
+  
+  <span class="keyword">bol</span>(<span class="string">"Amar kache ache:"</span>);
+  
+  <span class="comment">// List er length holo 4</span>
+  <span class="keyword">ghuro</span>(<span class="keyword">rakh</span> i = <span class="number">0</span>; i < <span class="number">4</span>; i = i + <span class="number">1</span>) {
+    <span class="keyword">bol</span>((i+<span class="number">1</span>) + <span class="string">". "</span> + folguli[i]);
+  }
+<span class="keyword">chollam</span></pre>
+        </div>
+        <div>
+          <h4 class="font-semibold text-lg mb-2 text-green-500">Program Output</h4>
+          <pre class="demo-console p-4 rounded-lg text-sm text-gray-300">> Amar kache ache:
+> 1. Aam
+> 2. Jaam
+> 3. Kola
+> 4. Lichu
+</pre>
+        </div>
+      </div>
+    </div>
+
   </section>
 
   <section class="mt-12">
@@ -616,10 +647,9 @@ chollam"></textarea>
         <svg class="w-6 h-6"><use href="#icon-close"></use></svg>
       </button>
     </div>
-    <img src="https://avatars.githubusercontent.com/u/1024025?v=4" alt="Developer Photo" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-sky-500">
-    <h3 class="text-center text-2xl font-bold header-text">Suraia</h3> <p class="text-center accent-text mb-4">Student & Aspiring Developer</p> <p class="text-center section-text">
-      Ami ei "Bondhu" language project-ti toiri korechi. Amar technology-r proti obhiman ache ebong ami sobsomoy notun kichu shikhte bhalobasi.
-    </p>
+    <img src="./copy.jpg" alt="Developer Photo" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-sky-500">
+    <h3 class="text-center text-2xl font-bold header-text">MD. AHSANUR RAHAMAN</h3> <p class="text-center accent-text mb-4">Student & Aspiring Machine Learning Enthusiast</p> <p class="text-center section-text">
+Ami “Bondhu” language project-ti amar 6th semester-er “Compiler Design Sessional” course-er jonno toiri korechi. Samne ei project-ti aro beshi structured ebong professional vabe develop korar ichha ache.</p>
     <div class="text-center mt-6">
       <a href="https://github.com/suraia-sharin" target="_blank" class="px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-500 transition-all">Visit GitHub</a>
     </div>
